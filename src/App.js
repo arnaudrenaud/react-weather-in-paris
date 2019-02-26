@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+import TemperatureDescription from './TemperatureDescription';
 
 class App extends Component {
+  state = {
+    temperature: null,
+  };
+
+  componentDidMount() {
+    axios
+      .get(
+        'http://api.openweathermap.org/data/2.5/weather?q=Paris,fr&APPID=b931ed617e0cf08353ced5dbc4aff024&units=metric'
+      )
+      .then(response =>
+        this.setState({ temperature: Math.floor(response.data.main.temp) })
+      );
+  }
+
   render() {
+    if (this.state.temperature === null) return <p>Loading…</p>;
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <p>
+          {`Température actuellement à Paris: ${this.state.temperature}°C `}
+          (<TemperatureDescription temperature={this.state.temperature} />)
+        </p>
       </div>
     );
   }
